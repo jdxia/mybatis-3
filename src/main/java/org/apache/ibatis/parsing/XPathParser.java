@@ -46,10 +46,31 @@ import org.xml.sax.SAXParseException;
  */
 public class XPathParser {
 
+  /**
+   * xml domcument对象
+   */
   private final Document document;
+
+  /**
+   * 是否校验xml, 一般为true
+   */
   private boolean validation;
+
+  /**
+   * xml实体解析器, 根据DTD或者XSD文件对 xml解析
+   */
   private EntityResolver entityResolver;
+
+  /**
+   * 变量Properties对象
+   * 替换动态配置的属性值, 比如配置文件中的 ${password}
+   * 数据来源: 可以是 Properties文件
+   */
   private Properties variables;
+
+  /**
+   * java xpath对象, 查询xml中的节点和元素
+   */
   private XPath xpath;
 
   public XPathParser(String xml) {
@@ -112,8 +133,16 @@ public class XPathParser {
     this.document = document;
   }
 
+  /**
+   * 构造 XPathParser对象
+   * @param xml xml文件地址
+   * @param validation  校验是否xml
+   * @param variables 变量Properties对象
+   * @param entityResolver  xml实体解析器
+   */
   public XPathParser(String xml, boolean validation, Properties variables, EntityResolver entityResolver) {
     commonConstructor(validation, variables, entityResolver);
+    //将xml文件解析成Document对象
     this.document = createDocument(new InputSource(new StringReader(xml)));
   }
 
@@ -227,6 +256,12 @@ public class XPathParser {
     }
   }
 
+  /**
+   * 创建Document对象
+   *
+   * @param inputSource xml的InputSource对象
+   * @return Document 对象
+   */
   private Document createDocument(InputSource inputSource) {
     // important: this must only be called AFTER common constructor
     try {
@@ -265,9 +300,11 @@ public class XPathParser {
   }
 
   private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
+    //保存传过来的属性
     this.validation = validation;
     this.entityResolver = entityResolver;
     this.variables = variables;
+    //创建XPathFactory对象
     XPathFactory factory = XPathFactory.newInstance();
     this.xpath = factory.newXPath();
   }
